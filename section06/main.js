@@ -37,13 +37,20 @@ const box = new THREE.Mesh(boxGeometry, material);
 scene.add(box);
 
 //デバッグ
-// gui.add(box.position,"x",-3,3,0.01);
-gui.add(box.position,"x").min(-3).max(3).step(0.01).name("transformX");
-gui.add(box.position,"y").min(-3).max(3).step(0.01).name("transformY");
-gui.add(box.position,"z").min(-3).max(3).step(0.01).name("transformZ");
+//フォルダー
+const positionFolder = gui.addFolder("Position");
+const visibleFolder = gui.addFolder("Visible");
+const colorFolder = gui.addFolder("Color");
 
-gui.add(box,"visible");
-gui.add(material,"wireframe");
+// gui.add(box.position,"x",-3,3,0.01);
+positionFolder.add(box.position,"x").min(-3).max(3).step(0.01).name("transformX");
+positionFolder.add(box.position,"y").min(-3).max(3).step(0.01).name("transformY");
+positionFolder.add(box.position,"z").min(-3).max(3).step(0.01).name("transformZ");
+
+visibleFolder.add(box,"visible");
+visibleFolder.add(material,"wireframe");
+
+colorFolder.addColor(material,"color");
 
 //ライト
 const ambientLight = new THREE.AmbientLight(0xffffff, 0.8);
