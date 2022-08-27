@@ -28,7 +28,40 @@ const sizes = {
 }
 
 window.addEventListener('resize',()=>{
-    console.log('a');
+    sizes.width = window.innerWidth;
+    sizes.height = window.innerHeight;
+
+    //Update camera
+    camera.aspect = sizes.width / sizes.height
+    camera.updateProjectionMatrix();//カメラのプロパティを変更したときは呼び出さないといけない
+
+    renderer.setSize(sizes.width, sizes.height)
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))//ピクセル数が多すぎるとGPUに負荷がかかりすぎるので調整
+})
+
+window.addEventListener("dblclick",()=>{
+    //safari対策として、webkitを追加する必要がある
+    const fullscreenElement = document.fullscreenElement || document.webkitFullscreenElement;
+    
+    if(!fullscreenElement){
+        if(canvas.requestFullscreen)
+        {
+            canvas.requestFullscreen()
+        }
+        else if(canvas.webkitRequestFullscreen)
+        {
+            canvas.webkitRequestFullscreen()
+        }
+    }else{
+        if(document.exitFullscreen)
+        {
+            document.exitFullscreen()
+        }
+        else if(document.webkitExitFullscreen)
+        {
+            document.webkitExitFullscreen()
+        }
+    }
 })
 
 /**
@@ -50,6 +83,7 @@ const renderer = new THREE.WebGLRenderer({
     canvas: canvas
 })
 renderer.setSize(sizes.width, sizes.height)
+renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
 
 /**
  * Animate
