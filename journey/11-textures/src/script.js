@@ -63,11 +63,14 @@ const roughnessTexture = textureLoader.load('/textures/door/roughness.jpg')
 colorTexture.rotation = Math.PI * 0.25
 colorTexture.center.x = 0.5
 colorTexture.center.y = 0.5
+
+//Minification filter : テクスチャの画像が大きすぎる場合に使うフィルター
 // colorTexture.minFilter = THREE.NearestFilter
+
+//Magnification Filter : テクスチャの画像が小さすぎる場合に使うフィルター
 colorTexture.magFilter = THREE.NearestFilter
 
 const geometry = new THREE.BoxGeometry(1,1,1)
-console.log(geometry.attributes.uv)
 //テクスチャを使用するにはマテリアルにmapを渡す
 const material = new THREE.MeshBasicMaterial({ map: colorTexture })
 const mesh = new THREE.Mesh(geometry, material)
