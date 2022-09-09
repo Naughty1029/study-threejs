@@ -19,15 +19,59 @@ const scene = new THREE.Scene()
  * Textures
  */
 const textureLoader = new THREE.TextureLoader()
-
+const particleTexture = textureLoader.load('/textures/particles/2.png')
 /**
  * Test cube
  */
-const cube = new THREE.Mesh(
-    new THREE.BoxGeometry(1, 1, 1),
-    new THREE.MeshBasicMaterial()
-)
-scene.add(cube)
+// const cube = new THREE.Mesh(
+//     new THREE.BoxGeometry(1, 1, 1),
+//     new THREE.MeshBasicMaterial()
+// )
+// scene.add(cube)
+
+/**
+ * Particles
+ */
+
+// const particleGeometry = new THREE.SphereGeometry(1,32,32)
+const particleGeometry = new THREE.BufferGeometry()
+const count = 5000
+
+const positions = new Float32Array(count * 3);
+const colors = new Float32Array(count * 3);
+
+for (let i = 0; i < count * 3; i++) {
+    positions[i] = (Math.random() - 0.5) * 10
+    colors[i] = Math.random()
+}
+particleGeometry.setAttribute('position',new THREE.BufferAttribute(positions,3));
+particleGeometry.setAttribute('color',new THREE.BufferAttribute(colors,3));
+
+const particleMaterial = new THREE.PointsMaterial()
+particleMaterial.size = 0.1
+particleMaterial.sizeAttenuation = true
+// particleMaterial.color = new THREE.Color('#ff88cc')
+// particleMaterial.map = particleTexture
+particleMaterial.transparent = true
+particleMaterial.alphaMap = particleTexture
+// particleMaterial.alphaTest = 0.001
+// particleMaterial.depthTest = false
+particleMaterial.depthWrite = false
+particleMaterial.blending = THREE.AdditiveBlending
+particleMaterial.vertexColors = true
+
+//WebGLは描画されるものがすでに描画されているものよりも近いかどうかをテストする
+//描画されるものの深さは、深度バッファと呼ばれるものに保存される。
+//パーティクルがこの深度バッファにあるものより近いかどうかをテストしない代わりに、WebGLにその深度バッファにパーティクルを書き込まないように指示することができる
+// const cube = new THREE.Mesh(
+//     new THREE.BoxGeometry(),
+//     new THREE.MeshBasicMaterial()
+// )
+// scene.add(cube)
+
+
+const particles = new THREE.Points(particleGeometry,particleMaterial)
+scene.add(particles)
 
 /**
  * Sizes
@@ -81,6 +125,15 @@ const clock = new THREE.Clock()
 const tick = () =>
 {
     const elapsedTime = clock.getElapsedTime()
+
+    // particles.rotation.y = elapsedTime * 0.2
+    for(let i = 0; i < count; i++)
+    {
+        const i3 = i * 3 //0,3,6,9 //Y:1,4,7,10
+        const x = particleGeometry.attributes.position.array[i3]
+        particleGeometry.attributes.position.array[i3 + 1] = Math.sin(elapsedTime + x)
+    }
+    particleGeometry.attributes.position.needsUpdate = true 
 
     // Update controls
     controls.update()
